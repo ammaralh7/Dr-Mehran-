@@ -46,7 +46,8 @@ export const LEARN_TOPICS: LearnTopic[] = [
   },
   {
     title: 'Eating for kidney health',
-    summary: 'Sodium, potassium, phosphorus and protein: what to watch, and why it differs from person to person.',
+    summary:
+      'Sodium, potassium, phosphorus and protein: what to watch, and why it differs from person to person.',
   },
   {
     title: 'Medicines and your kidneys',
@@ -54,6 +55,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
   },
   {
     title: 'When to call your doctor',
-    summary: 'Symptoms such as swelling, changes in urination, or shortness of breath that need medical advice.',
+    summary:
+      'Symptoms such as swelling, changes in urination, or shortness of breath that need medical advice.',
   },
 ];

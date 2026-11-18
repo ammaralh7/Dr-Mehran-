@@ -1,5 +1,5 @@
-import { ThemedText } from '@/components/themed-text';
-import { Card, Screen } from '@/components/ui';
+import { Card, Screen, ThemedText } from '@dr-mehran/shared';
+
 import { DISCLAIMER, LEARN_TOPICS } from '@/content/copy';
 
 export default function LearnScreen() {

@@ -11,8 +11,7 @@ import {
   type FluidEntry,
 } from './fluid';
 
-const at = (y: number, m: number, d: number, h = 12, min = 0) =>
-  new Date(y, m - 1, d, h, min).toISOString();
+const at = (y: number, m: number, d: number, h = 12, min = 0) => new Date(y, m - 1, d, h, min).toISOString();
 
 const entries: FluidEntry[] = [
   { id: 'a', amountMl: 250, at: at(2026, 11, 18, 8) },

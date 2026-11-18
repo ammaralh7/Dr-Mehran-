@@ -1,6 +1,5 @@
+import { useTheme } from '@dr-mehran/shared';
 import { NativeTabs } from 'expo-router/native-tabs';
-
-import { useTheme } from '@/hooks/use-theme';
 
 export default function AppTabs() {
   const theme = useTheme();

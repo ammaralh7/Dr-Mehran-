@@ -1,12 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import {
-  calculateEgfr,
-  gfrCategory,
-  gfrCategorySeverity,
-  toMgPerDl,
-  validateEgfrInput,
-} from './egfr';
+import { calculateEgfr, gfrCategory, gfrCategorySeverity, toMgPerDl, validateEgfrInput } from './egfr';
 
 describe('calculateEgfr (CKD-EPI 2021)', () => {
   // Expected values worked by hand from the published equation. Clinical

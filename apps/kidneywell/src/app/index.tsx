@@ -1,12 +1,19 @@
 import { router } from 'expo-router';
+import {
+  Button,
+  Card,
+  ProgressBar,
+  Row,
+  Screen,
+  ThemedText,
+  formatDate,
+  formatToday,
+  useStore,
+} from '@dr-mehran/shared';
 
-import { ThemedText } from '@/components/themed-text';
-import { Button, Card, ProgressBar, Row, Screen } from '@/components/ui';
 import { DISCLAIMER } from '@/content/copy';
 import { GFR_CATEGORY_LABELS, gfrCategory, gfrCategorySeverity } from '@/lib/egfr';
 import { goalProgress, totalForDay } from '@/lib/fluid';
-import { formatDate, formatToday } from '@/lib/format';
-import { useStore } from '@/lib/persisted-store';
 import { addFluid, egfrResultsStore, fluidEntriesStore, fluidGoalStore, volumeUnitStore } from '@/lib/stores';
 import { QUICK_ADD, VOLUME_UNIT_LABEL, formatVolume, toMl } from '@/lib/units';
 

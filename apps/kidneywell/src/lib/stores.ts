@@ -1,6 +1,7 @@
+import { createPersistedStore, newId } from '@dr-mehran/shared';
+
 import type { CreatinineUnit, Sex } from './egfr';
 import { pruneOlderThan, type FluidEntry } from './fluid';
-import { createPersistedStore, newId } from './persisted-store';
 import { DEFAULT_VOLUME_UNIT, type VolumeUnit } from './units';
 
 /** Fluid entries kept on the device. */
@@ -8,7 +9,10 @@ const FLUID_HISTORY_DAYS = 90;
 
 export const fluidEntriesStore = createPersistedStore<FluidEntry[]>('fluid.entries.v1', []);
 export const fluidGoalStore = createPersistedStore<number | null>('fluid.goalMl.v1', null);
-export const volumeUnitStore = createPersistedStore<VolumeUnit>('settings.volumeUnit.v1', DEFAULT_VOLUME_UNIT);
+export const volumeUnitStore = createPersistedStore<VolumeUnit>(
+  'settings.volumeUnit.v1',
+  DEFAULT_VOLUME_UNIT,
+);
 
 export function addFluid(amountMl: number, at = new Date()) {
   fluidEntriesStore.set((entries) =>

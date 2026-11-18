@@ -10,11 +10,18 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
-import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { BottomTabInset, MaxContentWidth, Radius, Spacing, useTheme } from './theme';
+import { ThemedText } from './themed-text';
 
-export function Screen({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
+export function Screen({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+}) {
   const theme = useTheme();
   return (
     <SafeAreaView edges={['top']} style={[styles.flex, { backgroundColor: theme.background }]}>
@@ -163,12 +170,6 @@ export function NumberField({
       </View>
     </View>
   );
-}
-
-/** Parses user-typed numbers, accepting a comma as the decimal separator. */
-export function parseNumber(text: string): number {
-  const cleaned = text.trim().replace(',', '.');
-  return cleaned === '' ? NaN : Number(cleaned);
 }
 
 export function ProgressBar({ progress, label }: { progress: number; label: string }) {

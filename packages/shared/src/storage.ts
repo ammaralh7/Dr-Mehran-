@@ -1,7 +1,7 @@
 /**
  * On-device key-value storage (iOS/Android), backed by SQLite.
  *
- * Phase 1 keeps all health data on the device only — nothing is sent to a
+ * Phase 1 keeps all health data on the device only. Nothing is sent to a
  * server. Before any cloud sync or provider sharing ships, this must move to
  * an encrypted store (e.g. SQLCipher) and a HIPAA-eligible backend.
  */

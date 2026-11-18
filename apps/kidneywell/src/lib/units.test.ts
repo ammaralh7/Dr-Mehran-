@@ -1,6 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { FLUID_MAX_ENTRY_ML, FLUID_MAX_GOAL_ML, FLUID_MIN_GOAL_ML, isValidEntryAmount, isValidGoal } from './fluid';
+import {
+  FLUID_MAX_ENTRY_ML,
+  FLUID_MAX_GOAL_ML,
+  FLUID_MIN_GOAL_ML,
+  isValidEntryAmount,
+  isValidGoal,
+} from './fluid';
 import { formatVolume, fromMl, rangeInUnit, toMl } from './units';
 
 describe('volume conversion', () => {
