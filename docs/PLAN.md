@@ -10,8 +10,8 @@ All health data stays on the phone. That keeps the first release out of server-s
 
 | | KidneyWell | Hypertension Hub |
 | --- | --- | --- |
-| Core measurement | eGFR calculator + history ✅ | Blood pressure log (manual entry) with ACC/AHA category and trend chart |
-| Daily tracking | Fluid log in oz or mL ✅, then sodium and potassium | Home BP averages (e.g. 7-day), DASH and sodium habits |
+| Core measurement | eGFR calculator + history ✅ | Blood pressure log with ACC/AHA category ✅, trend chart ✅, severe-reading alert ✅ |
+| Daily tracking | Fluid log in oz or mL ✅, then sodium and potassium | 7-day and period averages ✅, then DASH and sodium habits |
 | Shared | Medication list and reminders · symptom diary with "contact your doctor" prompts · education articles · local notifications | ← same |
 | Visit report | PDF summary to show or send to the doctor | ← same |
 
@@ -31,7 +31,7 @@ All health data stays on the phone. That keeps the first release out of server-s
 
 ## Shared code
 
-When Hypertension Hub starts, move the code both apps use (UI components, theme, local storage, medications, reminders, symptom diary, education, reports) into shared packages under `packages/`, with each app in `apps/`. Each app keeps its own name, branding and store listing.
+The repository is an npm workspace. `packages/shared` holds the UI kit, the theme system (each app passes its own brand colors), on-device storage and formatting. Medications, reminders, the symptom diary, education and visit reports go there too as they're built, so both apps get them. Each app keeps its own name, branding and store listing.
 
 ## Clinical safety rules (apply to both apps)
 

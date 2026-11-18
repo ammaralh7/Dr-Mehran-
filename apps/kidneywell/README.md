@@ -15,8 +15,11 @@ All data stays **on the device** (SQLite). Nothing is sent to a server yet.
 
 ## Run it
 
+From the repository root:
+
 ```bash
 npm install
+cd apps/kidneywell
 npx expo start        # scan the QR code with Expo Go, or press i / a for a simulator
 ```
 
@@ -24,19 +27,22 @@ A browser preview (`npx expo start --web`) is available for quick checks. The ap
 
 ## Checks
 
+From the repository root, for both apps and the shared package:
+
 ```bash
-npm test              # unit tests (eGFR equation, fluid log, unit conversion)
+npm test              # unit tests (eGFR equation, fluid log, unit conversion, ...)
 npm run typecheck
 npm run lint
+npm run format:check
 ```
 
 ## Where things live
 
 ```
 src/app/          screens (one file per tab; Expo Router)
-src/components/   shared UI: Screen, Card, Button, inputs, tab bar
+src/components/   tab bar (shared UI comes from packages/shared)
 src/content/      ALL patient-facing medical wording, for clinical review
-src/lib/          logic: egfr.ts, fluid.ts, local storage and stores
+src/lib/          logic: egfr.ts, fluid.ts, units.ts, stores
 ```
 
 ## Clinical review needed before release
