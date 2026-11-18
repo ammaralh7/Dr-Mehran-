@@ -7,7 +7,7 @@ Kidney health app for iOS and Android, built with Expo (React Native + TypeScrip
 | Tab | Feature |
 | --- | --- |
 | **Today** | Dashboard: today's fluid total and goal progress, latest eGFR with its stage |
-| **Track** | Fluid log with quick-add, a custom amount, a goal set by the user's care team, and a daily log |
+| **Track** | Fluid log in ounces (default, for the US) or mL, with quick-add, a custom amount, a goal set by the user's care team, and a daily log |
 | **Kidney** | eGFR calculator (CKD-EPI 2021, mg/dL or µmol/L), KDIGO stage, guidance, saved history |
 | **Learn** | Planned education topics (articles still to be written with Dr. Mehran) |
 
@@ -25,7 +25,7 @@ A browser preview (`npx expo start --web`) is available for quick checks. The ap
 ## Checks
 
 ```bash
-npm test              # unit tests (eGFR equation, fluid log)
+npm test              # unit tests (eGFR equation, fluid log, unit conversion)
 npm run typecheck
 npm run lint
 ```

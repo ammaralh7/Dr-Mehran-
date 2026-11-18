@@ -2,46 +2,74 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Button, Card, NumberField, ProgressBar, Row, Screen, parseNumber } from '@/components/ui';
+import { Button, Card, NumberField, ProgressBar, Row, Screen, Segmented, parseNumber } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { FLUID_GOAL_NOTE } from '@/content/copy';
 import {
   FLUID_MAX_ENTRY_ML,
   FLUID_MAX_GOAL_ML,
   FLUID_MIN_GOAL_ML,
-  FLUID_QUICK_ADD_ML,
   entriesForDay,
   goalProgress,
   isValidEntryAmount,
   isValidGoal,
 } from '@/lib/fluid';
-import { formatMl, formatTime } from '@/lib/format';
+import { formatTime } from '@/lib/format';
 import { useStore } from '@/lib/persisted-store';
-import { addFluid, fluidEntriesStore, fluidGoalStore, removeFluid } from '@/lib/stores';
+import { addFluid, fluidEntriesStore, fluidGoalStore, removeFluid, volumeUnitStore } from '@/lib/stores';
+import {
+  QUICK_ADD,
+  VOLUME_UNIT_LABEL,
+  formatVolume,
+  fromMl,
+  rangeInUnit,
+  toMl,
+  type VolumeUnit,
+} from '@/lib/units';
 import { useTheme } from '@/hooks/use-theme';
+
+const UNIT_OPTIONS = [
+  { value: 'oz', label: 'Ounces (oz)' },
+  { value: 'ml', label: 'Millilitres (mL)' },
+] as const;
+
+function goalToText(goalMl: number | null, unit: VolumeUnit): string {
+  return goalMl == null ? '' : String(Math.round(fromMl(goalMl, unit)));
+}
 
 export default function TrackScreen() {
   const theme = useTheme();
   const entries = useStore(fluidEntriesStore);
   const goal = useStore(fluidGoalStore);
+  const unit = useStore(volumeUnitStore);
+  const unitLabel = VOLUME_UNIT_LABEL[unit];
 
   const [custom, setCustom] = useState('');
   const [customError, setCustomError] = useState<string | null>(null);
   const [editingGoal, setEditingGoal] = useState(goal == null);
-  const [goalText, setGoalText] = useState(goal == null ? '' : String(goal));
+  const [goalText, setGoalText] = useState(goalToText(goal, unit));
   const [goalError, setGoalError] = useState<string | null>(null);
 
   const today = entriesForDay(entries, new Date());
   const total = today.reduce((sum, entry) => sum + entry.amountMl, 0);
   const progress = goalProgress(total, goal);
 
+  function changeUnit(next: VolumeUnit) {
+    volumeUnitStore.set(next);
+    setGoalText(goalToText(goal, next));
+    setCustom('');
+    setCustomError(null);
+    setGoalError(null);
+  }
+
   function addCustom() {
-    const amount = parseNumber(custom);
-    if (!isValidEntryAmount(amount)) {
-      setCustomError(`Enter an amount between 1 and ${FLUID_MAX_ENTRY_ML} mL.`);
+    const amountMl = Math.round(toMl(parseNumber(custom), unit));
+    if (!isValidEntryAmount(amountMl)) {
+      const range = rangeInUnit(1, FLUID_MAX_ENTRY_ML, unit);
+      setCustomError(`Enter an amount between ${range.min} and ${range.max} ${unitLabel}.`);
       return;
     }
-    addFluid(Math.round(amount));
+    addFluid(amountMl);
     setCustom('');
     setCustomError(null);
   }
@@ -53,12 +81,13 @@ export default function TrackScreen() {
       setGoalError(null);
       return;
     }
-    const value = parseNumber(goalText);
-    if (!isValidGoal(value)) {
-      setGoalError(`Enter a goal between ${FLUID_MIN_GOAL_ML} and ${FLUID_MAX_GOAL_ML} mL, or leave it empty.`);
+    const goalMl = Math.round(toMl(parseNumber(goalText), unit));
+    if (!isValidGoal(goalMl)) {
+      const range = rangeInUnit(FLUID_MIN_GOAL_ML, FLUID_MAX_GOAL_ML, unit);
+      setGoalError(`Enter a goal between ${range.min} and ${range.max} ${unitLabel}, or leave it empty.`);
       return;
     }
-    fluidGoalStore.set(Math.round(value));
+    fluidGoalStore.set(goalMl);
     setEditingGoal(false);
     setGoalError(null);
   }
@@ -67,12 +96,13 @@ export default function TrackScreen() {
     <Screen title="Track" subtitle="Log what you drink through the day.">
       <Card>
         <ThemedText type="heading">Today</ThemedText>
-        <ThemedText type="metric">{formatMl(total)}</ThemedText>
+        <ThemedText type="metric">{formatVolume(total, unit)}</ThemedText>
         {progress != null && goal != null ? (
           <>
             <ProgressBar progress={progress} label="Progress toward today's fluid goal" />
             <ThemedText type="small" themeColor="textSecondary">
-              {total >= goal ? 'Goal reached' : `${formatMl(goal - total)} to go`} · goal {formatMl(goal)}
+              {total >= goal ? 'Goal reached' : `${formatVolume(goal - total, unit)} to go`} · goal{' '}
+              {formatVolume(goal, unit)}
             </ThemedText>
           </>
         ) : null}
@@ -81,8 +111,12 @@ export default function TrackScreen() {
           Quick add
         </ThemedText>
         <Row>
-          {FLUID_QUICK_ADD_ML.map((amount) => (
-            <Button key={amount} label={`+ ${amount} mL`} onPress={() => addFluid(amount)} />
+          {QUICK_ADD[unit].map((amount) => (
+            <Button
+              key={amount}
+              label={`+ ${amount} ${unitLabel}`}
+              onPress={() => addFluid(Math.round(toMl(amount, unit)))}
+            />
           ))}
         </Row>
 
@@ -90,9 +124,8 @@ export default function TrackScreen() {
           label="Other amount"
           value={custom}
           onChangeText={setCustom}
-          placeholder="e.g. 200"
-          suffix="mL"
-          decimal={false}
+          placeholder={unit === 'oz' ? 'e.g. 6' : 'e.g. 200'}
+          suffix={unitLabel}
         />
         {customError ? (
           <ThemedText type="small" themeColor="urgent">
@@ -116,8 +149,7 @@ export default function TrackScreen() {
               value={goalText}
               onChangeText={setGoalText}
               placeholder="From your care team"
-              suffix="mL"
-              decimal={false}
+              suffix={unitLabel}
             />
             {goalError ? (
               <ThemedText type="small" themeColor="urgent">
@@ -130,7 +162,7 @@ export default function TrackScreen() {
           </>
         ) : (
           <>
-            <ThemedText type="default">{goal == null ? 'No goal set' : formatMl(goal)}</ThemedText>
+            <ThemedText type="default">{goal == null ? 'No goal set' : formatVolume(goal, unit)}</ThemedText>
             <Row>
               <Button label="Change goal" variant="secondary" onPress={() => setEditingGoal(true)} />
             </Row>
@@ -147,13 +179,13 @@ export default function TrackScreen() {
         ) : (
           today.map((entry) => (
             <View key={entry.id} style={[styles.logRow, { borderTopColor: theme.border }]}>
-              <ThemedText>{formatMl(entry.amountMl)}</ThemedText>
+              <ThemedText>{formatVolume(entry.amountMl, unit)}</ThemedText>
               <ThemedText type="small" themeColor="textSecondary" style={styles.logTime}>
                 {formatTime(entry.at)}
               </ThemedText>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`Remove ${formatMl(entry.amountMl)} at ${formatTime(entry.at)}`}
+                accessibilityLabel={`Remove ${formatVolume(entry.amountMl, unit)} at ${formatTime(entry.at)}`}
                 hitSlop={12}
                 onPress={() => removeFluid(entry.id)}>
                 <ThemedText type="smallBold" themeColor="tint">
@@ -163,6 +195,10 @@ export default function TrackScreen() {
             </View>
           ))
         )}
+      </Card>
+
+      <Card>
+        <Segmented label="Show amounts in" options={UNIT_OPTIONS} value={unit} onChange={changeUnit} />
       </Card>
 
       <ThemedText type="small" themeColor="textSecondary">

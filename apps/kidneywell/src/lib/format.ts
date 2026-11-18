@@ -1,7 +1,3 @@
-export function formatMl(ml: number): string {
-  return `${ml.toLocaleString()} mL`;
-}
-
 export function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }

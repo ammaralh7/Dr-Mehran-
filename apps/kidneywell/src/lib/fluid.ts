@@ -14,7 +14,6 @@ export interface FluidEntry {
   at: string;
 }
 
-export const FLUID_QUICK_ADD_ML = [150, 250, 330, 500] as const;
 export const FLUID_MAX_ENTRY_ML = 2000;
 export const FLUID_MIN_GOAL_ML = 250;
 export const FLUID_MAX_GOAL_ML = 6000;

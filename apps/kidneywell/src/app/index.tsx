@@ -5,14 +5,18 @@ import { Button, Card, ProgressBar, Row, Screen } from '@/components/ui';
 import { DISCLAIMER } from '@/content/copy';
 import { GFR_CATEGORY_LABELS, gfrCategory, gfrCategorySeverity } from '@/lib/egfr';
 import { goalProgress, totalForDay } from '@/lib/fluid';
-import { formatDate, formatMl, formatToday } from '@/lib/format';
+import { formatDate, formatToday } from '@/lib/format';
 import { useStore } from '@/lib/persisted-store';
-import { addFluid, egfrResultsStore, fluidEntriesStore, fluidGoalStore } from '@/lib/stores';
+import { addFluid, egfrResultsStore, fluidEntriesStore, fluidGoalStore, volumeUnitStore } from '@/lib/stores';
+import { QUICK_ADD, VOLUME_UNIT_LABEL, formatVolume, toMl } from '@/lib/units';
 
 export default function TodayScreen() {
   const entries = useStore(fluidEntriesStore);
   const goal = useStore(fluidGoalStore);
   const results = useStore(egfrResultsStore);
+  const unit = useStore(volumeUnitStore);
+  // The standard cup: 8 oz or 250 mL.
+  const quickAmount = QUICK_ADD[unit][1];
 
   const total = totalForDay(entries, new Date());
   const progress = goalProgress(total, goal);
@@ -24,7 +28,7 @@ export default function TodayScreen() {
     <Screen title="KidneyWell" subtitle={formatToday()}>
       <Card>
         <ThemedText type="heading">Fluids today</ThemedText>
-        <ThemedText type="metric">{formatMl(total)}</ThemedText>
+        <ThemedText type="metric">{formatVolume(total, unit)}</ThemedText>
         {progress == null ? (
           <ThemedText type="small" themeColor="textSecondary">
             No daily goal set. Add the goal your care team recommends on the Track tab.
@@ -33,12 +37,15 @@ export default function TodayScreen() {
           <>
             <ProgressBar progress={progress} label="Progress toward today's fluid goal" />
             <ThemedText type="small" themeColor="textSecondary">
-              Goal {formatMl(goal ?? 0)}
+              Goal {formatVolume(goal ?? 0, unit)}
             </ThemedText>
           </>
         )}
         <Row>
-          <Button label="+ 250 mL" onPress={() => addFluid(250)} />
+          <Button
+            label={`+ ${quickAmount} ${VOLUME_UNIT_LABEL[unit]}`}
+            onPress={() => addFluid(Math.round(toMl(quickAmount, unit)))}
+          />
           <Button label="More options" variant="secondary" onPress={() => router.navigate('/track')} />
         </Row>
       </Card>
